@@ -1,0 +1,23 @@
+name: Deploy ACCP
+
+on:
+  workflow_dispatch:        # ← déclenchement MANUEL uniquement (bouton "Run workflow")
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: acceptation  # ← lie à l'environment protégé = exige ton approbation
+    steps:
+      - name: Déploiement SSH sur le VPS (accp)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ${{ secrets.VPS_PROJECT_PATH }}
+            git fetch origin
+            git checkout develop
+            git pull origin develop
+            docker compose -f docker-compose.accp.yml up -d --build
+            docker compose -f docker-compose.accp.yml run --rm tailorcv-accp npx prisma migrate deploy
