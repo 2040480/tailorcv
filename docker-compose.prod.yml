@@ -1,0 +1,17 @@
+services:
+  tailorcv-prod:
+    build: .
+    container_name: tailorcv-prod
+    restart: unless-stopped
+    env_file: .env.prod
+    ports:
+      - "3100:3000"
+    networks:
+      - npm_network
+      - tailorcv_db_network
+
+networks:
+  npm_network:
+    external: true
+  tailorcv_db_network:
+    external: true
