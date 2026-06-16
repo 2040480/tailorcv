@@ -7,11 +7,11 @@ services:
     ports:
       - "3101:3000"
     networks:
-      - npm_network
+      - infrastructure_proxy
       - tailorcv_db_network
 
 networks:
-  npm_network:
+  infrastructure_proxy:
     external: true
   tailorcv_db_network:
     external: true
