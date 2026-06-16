@@ -1,0 +1,17 @@
+services:
+  tailorcv-prod:
+    build: .
+    container_name: tailorcv-prod
+    restart: unless-stopped
+    env_file: .env.prod
+    ports:
+      - "3100:3000"
+    networks:
+      - infrastructure_proxy
+      - tailorcv_db_network
+
+networks:
+  infrastructure_proxy:
+    external: true
+  tailorcv_db_network:
+    external: true
