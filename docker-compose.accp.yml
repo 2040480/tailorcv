@@ -1,0 +1,17 @@
+services:
+  tailorcv-accp:
+    build: .
+    container_name: tailorcv-accp
+    restart: unless-stopped
+    env_file: .env.accp
+    ports:
+      - "3101:3000"
+    networks:
+      - infrastructure_proxy
+      - tailorcv_db_network
+
+networks:
+  infrastructure_proxy:
+    external: true
+  tailorcv_db_network:
+    external: true
