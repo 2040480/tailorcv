@@ -1,0 +1,18 @@
+services:
+  tailorcv-postgres:
+    image: postgres:16-alpine
+    container_name: tailorcv-postgres
+    restart: unless-stopped
+    env_file: .env.db
+    volumes:
+      - tailorcv_pgdata:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - tailorcv_db_network
+
+volumes:
+  tailorcv_pgdata:
+
+networks:
+  tailorcv_db_network:
+    name: tailorcv_db_network
