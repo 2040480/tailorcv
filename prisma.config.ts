@@ -10,29 +10,18 @@ function resolveEnvironment(): Environment {
 
 const environment = resolveEnvironment();
 
-switch (environment) {
-  case "production":
-    break;
+if (environment === "development") {
+  await import("dotenv").then((dotenv) => dotenv.config());
 
-  case "ci":
-    break;
-
-  case "development":
-    require("dotenv").config();
-    if (!process.env["DATABASE_URL"]) {
-      throw new Error(
-        "DATABASE_URL introuvable en développement. Vérifiez votre fichier .env."
-      );
-    }
-    break;
+  if (!process.env["DATABASE_URL"]) {
+    throw new Error(
+      "DATABASE_URL introuvable en développement. Vérifiez votre fichier .env."
+    );
+  }
 }
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
-  migrations: {
-    path: "prisma/migrations",
-  },
-  datasource: {
-    url: process.env["DATABASE_URL"],
-  },
+  migrations: { path: "prisma/migrations" },
+  datasource: { url: process.env["DATABASE_URL"] },
 });
