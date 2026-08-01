@@ -1,27 +1,30 @@
 import { defineConfig } from "prisma/config";
 
-// Décision explicite du chargement des variables selon l'environnement.
-// - En développement : on charge le fichier .env local.
-// - En production (conteneur Docker) : les variables sont déjà injectées
-//   par Docker via env_file, donc on ne charge aucun fichier.
-const environment = process.env.NODE_ENV ?? "development";
+type Environment = "production" | "ci" | "development";
+
+function resolveEnvironment(): Environment {
+  if (process.env.CI === "true") return "ci";
+  if (process.env.NODE_ENV === "production") return "production";
+  return "development";
+}
+
+const environment = resolveEnvironment();
 
 switch (environment) {
   case "production":
     break;
-  default:
-    require("dotenv").config();
+
+  case "ci":
     break;
-}
 
-const databaseUrl = process.env["DATABASE_URL"];
-
-if (!databaseUrl) {
-  throw new Error(
-    `DATABASE_URL introuvable (NODE_ENV=${environment}). ` +
-      `En développement, vérifiez votre fichier .env. ` +
-      `En production, vérifiez que Docker injecte bien la variable via env_file.`
-  );
+  case "development":
+    require("dotenv").config();
+    if (!process.env["DATABASE_URL"]) {
+      throw new Error(
+        "DATABASE_URL introuvable en développement. Vérifiez votre fichier .env."
+      );
+    }
+    break;
 }
 
 export default defineConfig({
@@ -30,6 +33,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: databaseUrl,
+    url: process.env["DATABASE_URL"],
   },
 });
