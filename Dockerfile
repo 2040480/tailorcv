@@ -12,7 +12,16 @@ COPY . .
 RUN npx prisma generate
 RUN npm run build
 
-# ---- runner ----
+# ---- migrator (image avec le CLI Prisma pour les migrations) ----
+FROM node:22-alpine AS migrator
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+COPY package.json ./
+CMD ["npx", "prisma", "migrate", "deploy"]
+
+# ---- runner (app légère) ----
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production

@@ -1,6 +1,8 @@
 services:
   tailorcv-prod:
-    build: .
+    build:
+      context: .
+      target: runner
     container_name: tailorcv-prod
     restart: unless-stopped
     env_file: .env.prod
@@ -9,6 +11,16 @@ services:
     networks:
       - infrastructure_proxy
       - tailorcv_db_network
+
+  tailorcv-prod-migrate:
+    build:
+      context: .
+      target: migrator
+    env_file: .env.prod
+    networks:
+      - tailorcv_db_network
+    profiles:
+      - migrate
 
 networks:
   infrastructure_proxy:

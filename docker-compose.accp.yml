@@ -1,6 +1,8 @@
 services:
   tailorcv-accp:
-    build: .
+    build:
+      context: .
+      target: runner
     container_name: tailorcv-accp
     restart: unless-stopped
     env_file: .env.accp
@@ -9,6 +11,16 @@ services:
     networks:
       - infrastructure_proxy
       - tailorcv_db_network
+
+  tailorcv-accp-migrate:
+    build:
+      context: .
+      target: migrator
+    env_file: .env.accp
+    networks:
+      - tailorcv_db_network
+    profiles:
+      - migrate
 
 networks:
   infrastructure_proxy:
