@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Déploiement SSH sur le VPS (prod)
+      - name: Deploiement SSH prod
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -20,4 +20,4 @@ jobs:
             git checkout main
             git pull origin main
             docker compose -f docker-compose.prod.yml up -d --build
-            docker compose -f docker-compose.prod.yml run --rm tailorcv-prod npx prisma migrate deploy
+            docker compose -f docker-compose.prod.yml run --rm tailorcv-prod-migrate

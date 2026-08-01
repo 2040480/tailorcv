@@ -11,14 +11,13 @@ function resolveEnvironment(): Environment {
 
 const environment = resolveEnvironment();
 
+// En dev local, on charge le .env s'il existe (pour fournir DATABASE_URL).
+// En prod (Docker runtime) et CI, les variables viennent de l'environnement.
+// On ne valide PAS la présence de l'URL ici : prisma generate n'en a pas
+// besoin, et les commandes qui en ont besoin (migrate) lèvent leur propre
+// erreur si elle manque.
 if (environment === "development") {
   loadEnv();
-
-  if (!process.env["DATABASE_URL"]) {
-    throw new Error(
-      "DATABASE_URL introuvable en développement. Vérifiez votre fichier .env."
-    );
-  }
 }
 
 export default defineConfig({
