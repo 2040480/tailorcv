@@ -1,3 +1,4 @@
+import { config as loadEnv } from "dotenv";
 import { defineConfig } from "prisma/config";
 
 type Environment = "production" | "ci" | "development";
@@ -11,7 +12,7 @@ function resolveEnvironment(): Environment {
 const environment = resolveEnvironment();
 
 if (environment === "development") {
-  await import("dotenv").then((dotenv) => dotenv.config());
+  loadEnv();
 
   if (!process.env["DATABASE_URL"]) {
     throw new Error(
